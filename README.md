@@ -29,16 +29,16 @@ var thread = new Thread("worker-thread.js", function(event) {
     }, function(exitCode, errorMessage) {
 
         switch (exitCode) {
-        case Thread.EXIT_CODE.OK: // 0
+        case Thread.OK: // 0
             console.log("Safely closed.");
             break;
-        case Thread.EXIT_CODE.ERROR: // 1
+        case Thread.ERROR: // 1
             console.log("Terminates with an error from WorkerThread. " + errorMessage);
             break;
-        case Thread.EXIT_CODE.FORCE: // 2
+        case Thread.FORCE: // 2
             console.log("Forced termination by user.");
             break;
-        case Thread.EXIT_CODE.TIMEOUT: // 3
+        case Thread.TIMEOUT: // 3
             console.log("Watchdog barked.");
             break;
         }
