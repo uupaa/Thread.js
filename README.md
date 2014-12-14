@@ -44,7 +44,7 @@ var thread = new Thread("worker-thread.js", function(key, value, postback, event
         }
     });
 
-var key = 0;
+var key = 123;
 var value = "HELLO"
 
 thread.post(key, value);
@@ -60,6 +60,8 @@ thread.post(key, value);
 importScripts("lib/Thread.js");
 
 var thread = new Thread("", function(key, value, postback, event) {
+        console.log(key);   // 123
+        console.log(value); // "HELLO"
 
         thread.post(key, value + " WORLD");
 
