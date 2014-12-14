@@ -21,9 +21,9 @@ Thread and ThreadPool functions.
 <script src="lib/Thread.js"></script>
 <script>
 
-var thread = new Thread("worker-thread.js", function(event) {
+var thread = new Thread("worker-thread.js", function(key, value, postback, event) {
 
-        console.log(event.data); // "HELLO WORLD"
+        console.log(value); // "HELLO WORLD"
         thread.close();
 
     }, function(exitCode, errorMessage) {
@@ -44,7 +44,10 @@ var thread = new Thread("worker-thread.js", function(event) {
         }
     });
 
-thread.post("HELLO");
+var key = 0;
+var value = "HELLO"
+
+thread.post(key, value);
 
 </script>
 ```
@@ -56,15 +59,15 @@ thread.post("HELLO");
 
 importScripts("lib/Thread.js");
 
-var thread = new Thread("", function(event) {
+var thread = new Thread("", function(key, value, postback, event) {
 
-        thread.post(event.data + " WORLD");
+        thread.post(key, value + " WORLD");
 
     }, function(ready, cancel) {
         // .... destruction process...
 
-        ready();  // -> WORKER_CLOSE_READY
-      //cancel(); // -> WORKER_CLOSE_CANCEL
+        ready();  // -> THREAD_CLOSE_READY
+      //cancel(); // -> THREAD_CLOSE_CANCEL
     });
 
 ```
