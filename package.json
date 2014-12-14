@@ -1,6 +1,6 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
   "keywords": [
@@ -27,6 +27,7 @@
     "hint": "jshint lib/*.js",
     "score": "node ../WebModule/run/score.js; open lint/plato/index.html",
     "patch": "node ../WebModule/run/patch.js",
+    "setup": "node ../WebModule/run/setup.js",
     "start": "cd ../; Python -m SimpleHTTPServer 8000 &",
     "stop": "killall -- Python -m SimpleHTTPServer 8000; exit 0"
   },
