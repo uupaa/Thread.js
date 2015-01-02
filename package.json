@@ -1,26 +1,22 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
-  "keywords": [
-    "uupaa",
-    "WebModule",
-    "Unstable"
-  ],
+  "keywords": ["uupaa", "WebModule", "Unstable"],
   "repository": {
     "type": "git",
     "url": "https://github.com/uupaa/Thread.js.git"
   },
   "scripts": {
     "sync": "node ../WebModule/run/sync.js; npm update; node ../WebModule/run/page.js",
-    "watch": "node ../WebModule/run/watch.js --verbose --action minify",
-    "minify": "node ../WebModule/run/minify.js --verbose --strict --keep --pretty",
-    "build": "node ../WebModule/run/minify.js --verbose --strict --module",
+    "min": "node ../WebModule/run/minify.js --verbose --strict --keep --pretty",
+    "build": "node ../WebModule/run/minify.js --verbose --strict --keep --module",
+    "watch": "node ../WebModule/run/watch.js --verbose --run hint",
     "page": "node ../WebModule/run/page.js --verbose",
-    "test": "npm run minify; npm run node; npm run browser",
-    "node": "NODE_ENV=production NODE_PATH=lib node --harmony test/index.node.js",
-    "noded": "NODE_ENV=production NODE_PATH=lib node --debug-brk --harmony test/index.node.js",
+    "test": "npm run min; npm run node; npm run browser",
+    "node": "NODE_ENV=production NODE_PATH=lib node --harmony test/node.js",
+    "noded": "NODE_ENV=production NODE_PATH=lib node --debug-brk --harmony test/node.js",
     "browser": "open http://localhost:8000/Thread.js/test/index.html",
     "sim": "node ../WebModule/run/sim.js http://localhost:8000/Thread.js/test/index.html",
     "simx": "node ../WebModule/run/sim.js stop",
@@ -33,18 +29,15 @@
   },
   "webmodule": {
     "develop": false,
-    "source": [
-      "lib/Thread.js",
-      "lib/ThreadPool.js"
-    ],
-    "output": "release/Thread.min.js",
-    "target": [
-      "browser",
-      "worker"
-    ],
-    "label": [
-      "@dev"
-    ]
+    "label": ["@dev"],
+    "browser": {
+      "source": ["lib/Thread.js", "lib/ThreadPool.js"],
+      "output": "release/Thread.b.min.js"
+    },
+    "worker": {
+      "source": ["lib/Thread.js", "lib/ThreadPool.js"],
+      "output": "release/Thread.w.min.js"
+    }
   },
   "dependencies": {},
   "devDependencies": {},
