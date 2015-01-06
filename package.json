@@ -1,6 +1,6 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
   "keywords": ["uupaa", "WebModule", "Unstable"],

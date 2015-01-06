@@ -11,11 +11,7 @@ onmessage = function(event) {
         self.console.error = function() {};
     }
 
-    importScripts(".././test/wmtools.js");
-    importScripts("../lib/Thread.js");
-    importScripts("../lib/ThreadPool.js");
-    importScripts("../release/Thread.w.min.js");
-    importScripts("./testcase.js");
+    __SCRIPT__
 
     self.postMessage({ TEST_ERROR_MESSAGE: self.TEST_ERROR_MESSAGE || "" });
 };
