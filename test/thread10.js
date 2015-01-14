@@ -7,7 +7,7 @@ var thread = new Thread("", function(event, key, value) {
 
         thread.post(event, key, memory);
 
-    }, function(ready, cancel) {
-        ready();
+    }, function(yes, no) {
+        yes();
     });
 

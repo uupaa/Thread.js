@@ -8,7 +8,7 @@ var thread = new Thread("", function(event, key, value) {
         u8[2] *= 2;
 
         thread.post(event, key, u8.buffer, [u8.buffer]);
-    }, function(ready, cancel) {
-        ready();
+    }, function(yes, no) {
+        yes();
     });
 

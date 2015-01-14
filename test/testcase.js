@@ -40,7 +40,7 @@ function testThread(test, pass, miss) {
     // [2] WorkerThread | thread.post(event, 0, event.data + " WORLD") に加工して返す
     // [3] MainThread   | "HELLO WORLD" を受け取る
     // [4] MainThread   | thread.close()
-    // [5] WorkerThread | ready()
+    // [5] WorkerThread | yes()
     // [6] MainThread   | handleClose(EXIT_OK) が呼ばれる事を確認する
 
     var valid = false;
@@ -69,7 +69,7 @@ function testThread(test, pass, miss) {
 function testThreadCloseCancelAndForceClose(test, pass, miss) {
 
     // [1] MainThread   | thread.close() を要求
-    // [2] WorkerThread | cancel() を実行し、closeを拒否 -> handleClose は呼ばれない
+    // [2] WorkerThread | no() を実行し、closeを拒否 -> handleClose は呼ばれない
     // [3] MainThread   | 1.5秒経過しても threadが生存していることを確認し、thread.close(-1) で強制終了
     //                  | -> handleClose(EXIT_FORCE)が呼ばれる
     // [4] MainThread   | 2.0秒後に強制終了が成功している事を確認
@@ -78,7 +78,7 @@ function testThreadCloseCancelAndForceClose(test, pass, miss) {
 
     var thread = new Thread("thread2.js", function(event, key, value) {
             console.log(value); // "HELLO WORLD"
-            thread.close(1000); // -> cancel // [1]
+            thread.close(1000); // -> no // [1]
 
             setTimeout(function() {
                 if ( thread.isAlive() ) { // close canceled // [3]
@@ -109,7 +109,7 @@ function testThreadCloseCancelAndForceClose(test, pass, miss) {
 function testThreadBarkWatchdog(test, pass, miss) {
 
     // [1] MainThread   | thread.close(1000) を要求
-    // [2] WorkerThread | ready() も cancel() も返さない
+    // [2] WorkerThread | yes() も no() も返さない
     // [3] MainThread   | 1.0秒後にwatchdogが発動し自動でデストラクタが走る -> handleClose(EXIT_TIMEOUT) が呼ばれる
     // [4] MainThread   | 1.5秒後に終了している事を確認
     // [5] MainThread   | watchdog が発動した場合は handleClose(reason) は呼ばれない
@@ -237,7 +237,7 @@ function testThreadPostback(test, pass, miss) {
     // [2] WorkerThread | thread.post(event, 123, event.data + " WORLD", token) に加工して返す
     // [3] MainThread   | "HELLO WORLD" をポストバックで受け取る
     // [4] MainThread   | thread.close()
-    // [5] WorkerThread | ready()
+    // [5] WorkerThread | yes()
     // [6] MainThread   | handleClose(EXIT_OK) が呼ばれる事を確認する
 
     var valid = false;
@@ -280,7 +280,7 @@ function testThreadPostbackWithToken(test, pass, miss) {
     // [2] WorkerThread | thread.post(eent, 1234, event.data + " WORLD") に加工して返す
     // [3] MainThread   | "HELLO WORLD" をポストバックで受け取る
     // [4] MainThread   | thread.close()
-    // [5] WorkerThread | ready()
+    // [5] WorkerThread | yes()
     // [6] MainThread   | handleClose(EXIT_OK) が呼ばれる事を確認する
 
     var valid = false;

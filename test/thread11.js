@@ -12,7 +12,7 @@ var thread = new Thread("", function(event, key, value) {
         var packed = Codec.MessagePack.encode(obj);
 
         thread.post(event, key, packed.buffer, [packed.buffer]);
-    }, function(ready, cancel) {
-        ready();
+    }, function(yes, no) {
+        yes();
     });
 
