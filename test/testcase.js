@@ -16,9 +16,10 @@ return new Test(["Thread", "ThreadPool"], {
         browser:    true,
         worker:     false,
         node:       false,
-        nw:         false,
-        button:     true,
-        both:       true, // test the primary module and secondary module
+        nw:         true,
+        button:     false,
+        both:       false, // test the primary module and secondary module
+        ignoreError:false,
     }).add([
         testThread,
         testThreadCloseCancelAndForceClose,
@@ -30,12 +31,13 @@ return new Test(["Thread", "ThreadPool"], {
         testThreadPostbackWithToken,
         testThreadArrayBuffer,
         testThreadPool,
+        testThreadMessagePack,
     ]).run().clone();
 
 function testThread(test, pass, miss) {
 
-    // [1] MainThread   | thread.post(0, "HELLO")
-    // [2] WorkerThread | thread.post(0, event.data + " WORLD") に加工して返す
+    // [1] MainThread   | thread.post(null, 0, "HELLO")
+    // [2] WorkerThread | thread.post(event, 0, event.data + " WORLD") に加工して返す
     // [3] MainThread   | "HELLO WORLD" を受け取る
     // [4] MainThread   | thread.close()
     // [5] WorkerThread | ready()
@@ -43,11 +45,11 @@ function testThread(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread1.js", function(key, value, postback, event) {
+    var thread = new Thread("thread1.js", function(event, key, value) {
             console.log(value); // "HELLO WORLD"
             valid = value === "HELLO WORLD"; // [3]
             thread.close(); // [4]
-        }, function(exitCode, errorMessage) { // [6]
+        }, function(exitCode) { // [6]
             switch (exitCode) {
             case EXIT_OK:
                 if (valid) {
@@ -61,7 +63,7 @@ function testThread(test, pass, miss) {
             test.done(miss());
         });
 
-    thread.post(0, "HELLO"); // [1]
+    thread.post(null, 0, "HELLO"); // [1]
 }
 
 function testThreadCloseCancelAndForceClose(test, pass, miss) {
@@ -74,7 +76,7 @@ function testThreadCloseCancelAndForceClose(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread2.js", function(key, value, postback, event) {
+    var thread = new Thread("thread2.js", function(event, key, value) {
             console.log(value); // "HELLO WORLD"
             thread.close(1000); // -> cancel // [1]
 
@@ -92,7 +94,7 @@ function testThreadCloseCancelAndForceClose(test, pass, miss) {
                     test.done(miss());
                 }
             }, 2000);
-        }, function(exitCode, errorMessage) {
+        }, function(exitCode) {
             switch (exitCode) {
             case EXIT_FORCE: valid = true;
             case EXIT_OK:
@@ -101,7 +103,7 @@ function testThreadCloseCancelAndForceClose(test, pass, miss) {
             }
         });
 
-    thread.post(0, "HELLO");
+    thread.post(null, 0, "HELLO");
 }
 
 function testThreadBarkWatchdog(test, pass, miss) {
@@ -113,7 +115,7 @@ function testThreadBarkWatchdog(test, pass, miss) {
     // [5] MainThread   | watchdog が発動した場合は handleClose(reason) は呼ばれない
     var valid = false;
 
-    var thread = new Thread("thread3.js", function(key, value, postback, event) {
+    var thread = new Thread("thread3.js", function(event, key, value) {
             console.log(value); // "HELLO WORLD"
             thread.close(1000); // -> no response... [1]
 
@@ -124,7 +126,7 @@ function testThreadBarkWatchdog(test, pass, miss) {
                     test.done(miss());
                 }
             }, 1500);
-        }, function(exitCode, errorMessage) { // [3]
+        }, function(exitCode) { // [3]
             switch (exitCode) {
             case EXIT_TIMEOUT: valid = true;
             case EXIT_OK:
@@ -133,7 +135,7 @@ function testThreadBarkWatchdog(test, pass, miss) {
             }
         });
 
-    thread.post(0, "HELLO");
+    thread.post(null, 0, "HELLO");
 }
 
 function testThreadErrorInThread(test, pass, miss) {
@@ -143,7 +145,7 @@ function testThreadErrorInThread(test, pass, miss) {
     // [3] MainThread   | 1秒後に終了している事を確認
     var valid = false;
 
-    var thread = new Thread("thread4.js", function(key, value, postback, event) {
+    var thread = new Thread("thread4.js", function(event, key, value) {
             console.log(value); // "HELLO WORLD"
             thread.close();
 
@@ -155,7 +157,7 @@ function testThreadErrorInThread(test, pass, miss) {
                 }
             }, 1000);
 
-        }, function(exitCode, errorMessage) { // [2]
+        }, function(exitCode) { // [2]
             switch (exitCode) {
             case EXIT_ERROR: valid = true;
             case EXIT_OK:
@@ -164,7 +166,7 @@ function testThreadErrorInThread(test, pass, miss) {
             }
         });
 
-    thread.post(0, "HELLO");
+    thread.post(null, 0, "HELLO");
 }
 
 function testThreadErrorInWorker(test, pass, miss) {
@@ -182,11 +184,11 @@ function testThreadErrorInWorker(test, pass, miss) {
         }
     }, 2000);
 
-    var thread = new Thread("thread5.js", function(key, value, postback, event) {
+    var thread = new Thread("thread5.js", function(event, key, value) {
             //console.log(value); // "HELLO WORLD"
             //thread.close();
 
-        }, function(exitCode, errorMessage) { // [2]
+        }, function(exitCode) { // [2]
             switch (exitCode) {
             case EXIT_ERROR: valid = true;
             case EXIT_OK:
@@ -195,7 +197,7 @@ function testThreadErrorInWorker(test, pass, miss) {
             }
         });
 
-    thread.post(0, "HELLO");
+    thread.post(null, 0, "HELLO");
 }
 
 function testThreadCloseSelf(test, pass, miss) {
@@ -213,11 +215,11 @@ function testThreadCloseSelf(test, pass, miss) {
         }
     }, 2000);
 
-    var thread = new Thread("thread6.js", function(key, value, postback, event) {
+    var thread = new Thread("thread6.js", function(event, key, value) {
             //console.log(value); // "HELLO WORLD"
             //thread.close();
 
-        }, function(exitCode, errorMessage) { // [2]
+        }, function(exitCode) { // [2]
             switch (exitCode) {
             case EXIT_OK: valid = true;
             case EXIT_ERROR:
@@ -226,13 +228,13 @@ function testThreadCloseSelf(test, pass, miss) {
             }
         });
 
-    thread.post(0, "HELLO");
+    thread.post(null, 0, "HELLO");
 }
 
 function testThreadPostback(test, pass, miss) {
 
-    // [1] MainThread   | thread.post(123, "HELLO", postback)
-    // [2] WorkerThread | thread.post(123, event.data + " WORLD", token) に加工して返す
+    // [1] MainThread   | thread.post(null, 123, "HELLO")
+    // [2] WorkerThread | thread.post(event, 123, event.data + " WORLD", token) に加工して返す
     // [3] MainThread   | "HELLO WORLD" をポストバックで受け取る
     // [4] MainThread   | thread.close()
     // [5] WorkerThread | ready()
@@ -240,14 +242,14 @@ function testThreadPostback(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread7.js", function(key, value, postback, event) {
+    var thread = new Thread("thread7.js", function(event, key, value) {
 /*
             console.log(value); // "HELLO WORLD"
             valid = value === "HELLO WORLD"; // [3]
             thread.close(); // [4]
  */
             test.done(miss());
-        }, function(exitCode, errorMessage) { // [6]
+        }, function(exitCode) { // [6]
             switch (exitCode) {
             case EXIT_OK:
                 if (valid) {
@@ -263,7 +265,7 @@ function testThreadPostback(test, pass, miss) {
 
     var masterKey = 123; // random value
 
-    thread.post(masterKey, "HELLO", function(copiedKey, value, postback, event) { // [1]
+    thread.post(null, masterKey, "HELLO", null, function(event, copiedKey, value) { // [1]
         console.log(value); // "HELLO WORLD"
         if (masterKey === copiedKey && value === "HELLO WORLD") { // [3]
             valid = true;
@@ -274,24 +276,23 @@ function testThreadPostback(test, pass, miss) {
 
 function testThreadPostbackWithToken(test, pass, miss) {
 
-    // [1] MainThread   | thread.post("", "HELLO", null, postback, 1234)
-    // [2] WorkerThread | thread.post(event.data + " WORLD", null, token) に加工して返す
+    // [1] MainThread   | thread.post(null, 1234, "HELLO")
+    // [2] WorkerThread | thread.post(eent, 1234, event.data + " WORLD") に加工して返す
     // [3] MainThread   | "HELLO WORLD" をポストバックで受け取る
     // [4] MainThread   | thread.close()
     // [5] WorkerThread | ready()
     // [6] MainThread   | handleClose(EXIT_OK) が呼ばれる事を確認する
 
     var valid = false;
-    var key = 1234;
 
-    var thread = new Thread("thread8.js", function(key, value, postback, event) {
+    var thread = new Thread("thread8.js", function(event, key, value) {
 /*
             console.log(value); // "HELLO WORLD"
             valid = value === "HELLO WORLD"; // [3]
             thread.close(); // [4]
  */
             test.done(miss());
-        }, function(exitCode, errorMessage) { // [6]
+        }, function(exitCode) { // [6]
             switch (exitCode) {
             case EXIT_OK:
                 if (valid) {
@@ -305,7 +306,7 @@ function testThreadPostbackWithToken(test, pass, miss) {
             test.done(miss());
         });
 
-    thread.post(key, "HELLO", function(key, value, postback, event) { // [1]
+    thread.post(null, 1234, "HELLO", null, function(event, key, value) { // [1]
         console.log(value); // "HELLO WORLD"
         valid = value === "HELLO WORLD"; // [3]
         thread.close(); // [4]
@@ -316,9 +317,9 @@ function testThreadArrayBuffer(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread9.js", function(key, value, postback, event) {
+    var thread = new Thread("thread9.js", function(event, key, value) {
             test.done(miss());
-        }, function(exitCode, errorMessage) { // [6]
+        }, function(exitCode) { // [6]
             switch (exitCode) {
             case EXIT_OK:
                 if (valid) {
@@ -334,7 +335,7 @@ function testThreadArrayBuffer(test, pass, miss) {
 
     var source = new Uint8Array([1,2,3]);
 
-    thread.post(1, source.buffer, function(key, value, postback, event) {
+    thread.post(null, 1, source.buffer, [source.buffer], function(event, key, value) {
         var result = new Uint8Array(value);
 
         if (result[0] === 2 &&
@@ -347,7 +348,7 @@ function testThreadArrayBuffer(test, pass, miss) {
         }
 
         thread.close(); // [4]
-    }, [source.buffer]);
+    });
 }
 
 
@@ -363,28 +364,28 @@ function testThreadPool(test, pass, miss) {
         });
 
     var pool = new ThreadPool([
-                new Thread("thread10.js"),
-                new Thread("thread10.js"),
-                new Thread("thread10.js"),
+               new Thread("thread10.js"),
+               new Thread("thread10.js"),
+               new Thread("thread10.js"),
             ]);
 
     var source = new Uint8Array([1,2,3]);
 
-    pool.post(1, "A", function(key, value, postback, event) {
+    pool.post(null, 1, "A", null, function(event, key, value) {
         if (value === "A") {
             task.pass();
         } else {
             task.miss();
         }
     });
-    pool.post(1, "B", function(key, value, postback, event) {
+    pool.post(null, 1, "B", null, function(event, key, value) {
         if (value === "B") {
             task.pass();
         } else {
             task.miss();
         }
     });
-    pool.post(1, "C", function(key, value, postback, event) {
+    pool.post(null, 1, "C", null, function(event, key, value) {
         if (value === "C") {
             task.pass();
         } else {
@@ -392,6 +393,28 @@ function testThreadPool(test, pass, miss) {
         }
     });
 }
+
+
+function testThreadMessagePack(test, pass, miss) {
+    var thread = new Thread("thread11.js");
+
+    var packed = Codec.MessagePack.encode({
+            msg: "HELLO",
+            date1: new Date(),
+            date2: null,
+            data: new Uint8Array(10)
+        });
+
+    thread.post(null, 1, packed.buffer, [packed.buffer], function(event, key, value) {
+        var result = Codec.MessagePack.decode(new Uint8Array(value));
+        console.log(result.msg);   // -> "HELLO WORLD";
+        console.log(result.date1);
+        console.log(result.date2);
+        console.log(result.data);
+        test.done(pass());
+    });
+}
+
 
 })((this || 0).self || global);
 

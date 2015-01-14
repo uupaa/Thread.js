@@ -1,13 +1,13 @@
 importScripts("../lib/Thread.js");
 
-var thread = new Thread("", function(key, value, postback, event) {
-        var buffer = new Uint8Array(value);
+var thread = new Thread("", function(event, key, value) {
+        var u8 = new Uint8Array(value);
 
-        buffer[0] *= 2;
-        buffer[1] *= 2;
-        buffer[2] *= 2;
+        u8[0] *= 2;
+        u8[1] *= 2;
+        u8[2] *= 2;
 
-        thread.post(key, buffer.buffer, postback, [buffer.buffer]);
+        thread.post(event, key, u8.buffer, [u8.buffer]);
     }, function(ready, cancel) {
         ready();
     });

@@ -2,10 +2,10 @@ importScripts("../lib/Thread.js");
 
 var memory = "";
 
-var thread = new Thread("", function(key, value, postback, event) {
+var thread = new Thread("", function(event, key, value) {
         memory += value;
 
-        thread.post(key, memory, postback);
+        thread.post(event, key, memory);
 
     }, function(ready, cancel) {
         ready();

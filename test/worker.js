@@ -11,6 +11,11 @@ onmessage = function(event) {
         self.console.error = function() {};
     }
 
+    importScripts("../node_modules/uupaa.codec.js/node_modules/uupaa.hash.js/lib/Hash.js");
+    importScripts("../node_modules/uupaa.codec.js/lib/Codec.js");
+    importScripts("../node_modules/uupaa.codec.js/lib/Doubler.js");
+    importScripts("../node_modules/uupaa.codec.js/lib/MessagePack.js");
+    importScripts("../node_modules/uupaa.codec.js/lib/ZLib.js");
     importScripts(".././test/wmtools.js");
     importScripts("../lib/Thread.js");
     importScripts("../lib/ThreadPool.js");
