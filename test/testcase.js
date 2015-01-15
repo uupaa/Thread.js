@@ -18,7 +18,7 @@ return new Test(["Thread", "ThreadPool"], {
         node:       false,
         nw:         true,
         button:     false,
-        both:       false, // test the primary module and secondary module
+        both:       true, // test the primary module and secondary module
         ignoreError:false,
     }).add([
         testThread,
