@@ -1165,7 +1165,10 @@ function Task(taskCount, // @arg Integer              - user task count, value f
 Task["prototype"] = {
     "constructor":  Task,           // new Task(tackCount:Integer, callback:Function|Task = null, options:Object = {})
     // --- buffer accessor ---
+    "pop":          Task_pop,       // Task#pop():Any|undefined
     "push":         Task_push,      // Task#push(value:Any):this
+    "shift":        Task_shift,     // Task#shift():Any|undefined
+    "unshift":      Task_unshift,   // Task#unshift(value:Any):this
     "set":          Task_set,       // Task#set(key:String, value:Any):this
     // --- flow state ---
     "done":         Task_done,      // Task#done(err:Error|null):this
@@ -1200,10 +1203,29 @@ Task["loop"]      = Task_loop;      // Task.loop(source:Object|Array,
                                     //           callback:Function|Task = null,
                                     //           options:Object = {}):Task
 // --- implements ------------------------------------------
+function Task_pop() { // @ret Any|undefined
+    if (this._.buffer) {
+        return this._.buffer.pop();
+    }
+    return this;
+}
 function Task_push(value) { // @arg Any
                             // @ret this
     if (this._.buffer) {
         this._.buffer.push(value);
+    }
+    return this;
+}
+function Task_shift() { // @ret Any|undefined
+    if (this._.buffer) {
+        return this._.buffer.shift();
+    }
+    return this;
+}
+function Task_unshift(value) { // @arg Any
+                               // @ret this
+    if (this._.buffer) {
+        this._.buffer.unshift(value);
     }
     return this;
 }
@@ -1484,8 +1506,7 @@ function Task_loop(source,    // @arg Object|Array         - for loop and for-in
 if (typeof module !== "undefined") {
     module["exports"] = Task;
 }
-global["TestTask"] = Task;
-global["Task"] = Task;
+global["_TestTask_"] = Task;
 
 })((this || 0).self || global);
 
@@ -1495,7 +1516,7 @@ global["Task"] = Task;
 "use strict";
 
 // --- dependency modules ----------------------------------
-var Task = global["Task"];
+var Task = global["_TestTask_"];
 
 // --- define / local variables ----------------------------
 var _isNodeOrNodeWebKit = !!global.global;
@@ -1918,14 +1939,15 @@ function _addTestButtons(that, items) { // @arg TestItemFunctionArray
     // add <input type="button" onclick="test()" value="test()" /> buttons
     items.forEach(function(fn, index) {
         var itemName = fn["name"] || (fn + "").split(" ")[1].split("\x28")[0];
+        var safeName = itemName.replace(/\$/, "_"); // "concat$" -> "concat_"
 
-        if (!document.querySelector("#" + itemName)) {
+        if (!document.querySelector("#" + safeName)) {
             var inputNode = document.createElement("input");
             var next = "{pass:function(){},miss:function(){},done:function(){}}";
             var pass = "function(){console.log('"   + itemName + " pass')}";
             var miss = "function(){console.error('" + itemName + " miss')}";
 
-            inputNode.setAttribute("id", itemName);
+            inputNode.setAttribute("id", safeName);
             inputNode.setAttribute("type", "button");
             inputNode.setAttribute("value", itemName + "()");
             inputNode.setAttribute("onclick", "ModuleTest" + that._module[0] +

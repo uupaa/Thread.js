@@ -355,7 +355,7 @@ function testThreadArrayBuffer(test, pass, miss) {
 
 function testThreadPool(test, pass, miss) {
 
-    var task = new TestTask(3, function(err) {
+    var task = new Task(3, function(err) {
             if (err) {
                 test.done(miss());
             } else {
