@@ -1,0 +1,172 @@
+{
+  "reports": [
+    {
+      "info": {
+        "file": "lib/Thread.js",
+        "fileShort": "Thread.js",
+        "fileSafe": "Thread_js",
+        "link": "files/Thread_js/index.html"
+      },
+      "jshint": {
+        "messages": 8
+      },
+      "complexity": {
+        "aggregate": {
+          "sloc": {
+            "logical": 170,
+            "physical": 244
+          },
+          "cyclomatic": 40,
+          "halstead": {
+            "operators": {
+              "distinct": 27,
+              "total": 367,
+              "identifiers": [
+                "__stripped__"
+              ]
+            },
+            "operands": {
+              "distinct": 134,
+              "total": 503,
+              "identifiers": [
+                "__stripped__"
+              ]
+            },
+            "length": 870,
+            "vocabulary": 161,
+            "difficulty": 50.67537313432836,
+            "volume": 6377.897683959717,
+            "effort": 323202.34494722734,
+            "bugs": 2.125965894653239,
+            "time": 17955.68583040152
+          },
+          "params": 31,
+          "line": 1,
+          "cyclomaticDensity": 23.52941176470588,
+          "complexity": {
+            "cyclomatic": 40,
+            "sloc": {
+              "logical": 170,
+              "physical": 244
+            },
+            "halstead": {
+              "operators": {
+                "distinct": 27,
+                "total": 367,
+                "identifiers": [
+                  "__stripped__"
+                ]
+              },
+              "operands": {
+                "distinct": 134,
+                "total": 503,
+                "identifiers": [
+                  "__stripped__"
+                ]
+              },
+              "length": 870,
+              "vocabulary": 161,
+              "difficulty": 50.67537313432836,
+              "volume": 6377.897683959717,
+              "effort": 323202.34494722734,
+              "bugs": 2.125965894653239,
+              "time": 17955.68583040152
+            }
+          }
+        },
+        "module": "Thread.js",
+        "maintainability": 66.14579355603227
+      }
+    },
+    {
+      "info": {
+        "file": "lib/ThreadPool.js",
+        "fileShort": "ThreadPool.js",
+        "fileSafe": "ThreadPool_js",
+        "link": "files/ThreadPool_js/index.html"
+      },
+      "jshint": {
+        "messages": 0
+      },
+      "complexity": {
+        "aggregate": {
+          "sloc": {
+            "logical": 63,
+            "physical": 123
+          },
+          "cyclomatic": 14,
+          "halstead": {
+            "operators": {
+              "distinct": 27,
+              "total": 140,
+              "identifiers": [
+                "__stripped__"
+              ]
+            },
+            "operands": {
+              "distinct": 76,
+              "total": 199,
+              "identifiers": [
+                "__stripped__"
+              ]
+            },
+            "length": 339,
+            "vocabulary": 103,
+            "difficulty": 35.348684210526315,
+            "volume": 2266.723678715111,
+            "effort": 80125.69951142296,
+            "bugs": 0.7555745595717036,
+            "time": 4451.427750634609
+          },
+          "params": 17,
+          "line": 1,
+          "cyclomaticDensity": 22.22222222222222,
+          "complexity": {
+            "cyclomatic": 14,
+            "sloc": {
+              "logical": 63,
+              "physical": 123
+            },
+            "halstead": {
+              "operators": {
+                "distinct": 27,
+                "total": 140,
+                "identifiers": [
+                  "__stripped__"
+                ]
+              },
+              "operands": {
+                "distinct": 76,
+                "total": 199,
+                "identifiers": [
+                  "__stripped__"
+                ]
+              },
+              "length": 339,
+              "vocabulary": 103,
+              "difficulty": 35.348684210526315,
+              "volume": 2266.723678715111,
+              "effort": 80125.69951142296,
+              "bugs": 0.7555745595717036,
+              "time": 4451.427750634609
+            }
+          }
+        },
+        "module": "ThreadPool.js",
+        "maintainability": 68.78731582285448
+      }
+    }
+  ],
+  "summary": {
+    "total": {
+      "jshint": 8,
+      "sloc": 367,
+      "maintainability": 134.93310937888674
+    },
+    "average": {
+      "sloc": 183,
+      "maintainability": "67.47",
+      "jshint": "4.00"
+    }
+  }
+}

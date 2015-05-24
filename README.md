@@ -11,9 +11,9 @@ Thread and ThreadPool functions.
     - [Slide](http://uupaa.github.io/Slide/slide/WebModule/index.html)
     - [Development](https://github.com/uupaa/WebModule/wiki/Development)
 
-## How to use
+## Run on
 
-### Browser
+### Browser and node-webkit
 
 ```js
 // thread.html

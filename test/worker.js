@@ -1,29 +1,29 @@
 // Thread test
 
 onmessage = function(event) {
-    self.TEST_DATA = event.data;
-    self.TEST_ERROR_MESSAGE = "";
+    self.unitTest = event.data; // { message, setting: { secondary, baseDir } }
 
-    if (!self.console) {
+    if (!self.console) { // polyfill WebWorkerConsole
         self.console = function() {};
+        self.console.dir = function() {};
         self.console.log = function() {};
         self.console.warn = function() {};
         self.console.error = function() {};
+        self.console.table = function() {};
     }
 
+    importScripts("../lib/WebModuleGlobal.js");
+
+    importScripts("../node_modules/uupaa.task.js/node_modules/uupaa.hash.js/lib/Hash.js");
     importScripts("../node_modules/uupaa.task.js/lib/Task.js");
-    importScripts("../node_modules/uupaa.codec.js/node_modules/uupaa.hash.js/lib/Hash.js");
-    importScripts("../node_modules/uupaa.codec.js/lib/Codec.js");
-    importScripts("../node_modules/uupaa.codec.js/lib/Doubler.js");
-    importScripts("../node_modules/uupaa.codec.js/lib/MessagePack.js");
-    importScripts("../node_modules/uupaa.codec.js/lib/ZLib.js");
-    importScripts("../node_modules/uupaa.codec.js/lib/PNG.js");
-    importScripts(".././test/wmtools.js");
+    importScripts("../node_modules/uupaa.messagepack.js/node_modules/uupaa.utf8.js/lib/UTF8.js");
+    importScripts("../node_modules/uupaa.messagepack.js/lib/MessagePack.js");
+    importScripts("wmtools.js");
     importScripts("../lib/Thread.js");
     importScripts("../lib/ThreadPool.js");
     importScripts("../release/Thread.w.min.js");
-    importScripts("./testcase.js");
+    importScripts("testcase.js");
 
-    self.postMessage({ TEST_ERROR_MESSAGE: self.TEST_ERROR_MESSAGE || "" });
+    self.postMessage(self.unitTest);
 };
 

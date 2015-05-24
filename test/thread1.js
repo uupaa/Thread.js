@@ -1,3 +1,4 @@
+importScripts("../lib/WebModuleGlobal.js");
 importScripts("../lib/Thread.js");
 
 /*

@@ -1,6 +1,6 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
   "keywords": ["uupaa", "WebModule", "Unstable"],
@@ -20,7 +20,7 @@
     "browser": "open http://localhost:8000/Thread.js/test/index.html",
     "sim": "node ../WebModule/run/sim.js http://localhost:8000/Thread.js/test/index.html",
     "simx": "node ../WebModule/run/sim.js stop",
-    "hint": "jshint lib/*.js",
+    "hint": "eslint lib/*.js",
     "score": "node ../WebModule/run/score.js; open lint/plato/index.html",
     "patch": "node ../WebModule/run/patch.js",
     "setup": "node ../WebModule/run/setup.js",
@@ -43,10 +43,12 @@
       "output": "release/Thread.nw.min.js"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "uupaa.hash.js": ""
+  },
   "devDependencies": {
     "uupaa.task.js": "",
-    "uupaa.codec.js": ""
+    "uupaa.messagepack.js": ""
   },
   "lib": "./lib/",
   "main": "./index.js",

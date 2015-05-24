@@ -1,39 +1,54 @@
 var ModuleTestThread = (function(global) {
 
-var _isNodeOrNodeWebKit = !!global.global;
-var _runOnNodeWebKit =  _isNodeOrNodeWebKit && /native/.test(setTimeout);
-var _runOnNode       =  _isNodeOrNodeWebKit && !/native/.test(setTimeout);
-var _runOnWorker     = !_isNodeOrNodeWebKit && "WorkerLocation" in global;
-var _runOnBrowser    = !_isNodeOrNodeWebKit && "document" in global;
+global["BENCHMARK"] = false;
 
 var EXIT_OK      = Thread.OK;
 var EXIT_ERROR   = Thread.ERROR;
 var EXIT_FORCE   = Thread.FORCE;
 var EXIT_TIMEOUT = Thread.TIMEOUT;
 
-return new Test(["Thread", "ThreadPool"], {
-        disable:    false,
-        browser:    true,
-        worker:     false,
-        node:       false,
-        nw:         true,
-        button:     false,
-        both:       true, // test the primary module and secondary module
-        ignoreError:false,
+var test = new Test("Thread", {
+        disable:    false, // disable all tests.
+        browser:    true,  // enable browser test.
+        worker:     false, // enable worker test.
+        node:       false, // enable node test.
+        nw:         true,  // enable nw.js test.
+        button:     false, // show button.
+        both:       true,  // test the primary and secondary modules.
+        ignoreError:false, // ignore error.
+        callback:   function() {
+        },
+        errorback:  function(error) {
+        }
     }).add([
         testThread,
-        testThreadCloseCancelAndForceClose,
-        testThreadBarkWatchdog,
-        testThreadErrorInThread,
-        testThreadErrorInWorker,
-        testThreadCloseSelf,
-        testThreadPostback,
-        testThreadPostbackWithToken,
-        testThreadArrayBuffer,
-        testThreadPool,
-        testThreadMessagePack,
-    ]).run().clone();
+        testThread_closeCancelAndForceClose,
+        testThread_barkWatchdog,
+        testThread_errorInThread,
+        testThread_errorInWorker,
+        testThread_closeSelf,
+        testThread_postback,
+        testThread_postbackWithToken,
+        testThread_arrayBuffer,
+        testThread_pool,
+        testThread_messagePack,
+    ]);
 
+if (IN_BROWSER || IN_NW) {
+    test.add([
+        // browser and node-webkit test
+    ]);
+} else if (IN_WORKER) {
+    test.add([
+        // worker test
+    ]);
+} else if (IN_NODE) {
+    test.add([
+        // node.js and io.js test
+    ]);
+}
+
+// --- test cases ------------------------------------------
 function testThread(test, pass, miss) {
 
     // [1] MainThread   | thread.post(null, 0, "HELLO")
@@ -66,7 +81,7 @@ function testThread(test, pass, miss) {
     thread.post(null, 0, "HELLO"); // [1]
 }
 
-function testThreadCloseCancelAndForceClose(test, pass, miss) {
+function testThread_closeCancelAndForceClose(test, pass, miss) {
 
     // [1] MainThread   | thread.close() を要求
     // [2] WorkerThread | no() を実行し、closeを拒否 -> handleClose は呼ばれない
@@ -106,7 +121,7 @@ function testThreadCloseCancelAndForceClose(test, pass, miss) {
     thread.post(null, 0, "HELLO");
 }
 
-function testThreadBarkWatchdog(test, pass, miss) {
+function testThread_barkWatchdog(test, pass, miss) {
 
     // [1] MainThread   | thread.close(1000) を要求
     // [2] WorkerThread | yes() も no() も返さない
@@ -138,7 +153,7 @@ function testThreadBarkWatchdog(test, pass, miss) {
     thread.post(null, 0, "HELLO");
 }
 
-function testThreadErrorInThread(test, pass, miss) {
+function testThread_errorInThread(test, pass, miss) {
 
     // [1] WorkerThread | WorkerThread 内部で例外発生
     // [2] MainThread   | handleClose(EXIT_ERROR) が呼ばれる
@@ -169,7 +184,7 @@ function testThreadErrorInThread(test, pass, miss) {
     thread.post(null, 0, "HELLO");
 }
 
-function testThreadErrorInWorker(test, pass, miss) {
+function testThread_errorInWorker(test, pass, miss) {
 
     // [1] WorkerThread | WorkerThread の外側(importScriptの次あたりで)で例外発生
     // [2] MainThread   | handleClose(EXIT_ERROR) が呼ばれる
@@ -200,7 +215,7 @@ function testThreadErrorInWorker(test, pass, miss) {
     thread.post(null, 0, "HELLO");
 }
 
-function testThreadCloseSelf(test, pass, miss) {
+function testThread_closeSelf(test, pass, miss) {
 
     // [1] WorkerThread | thread.close() で自分自身を閉じる
     // [2] MainThread   | handleClose(EXIT_OK) が呼ばれる
@@ -231,7 +246,7 @@ function testThreadCloseSelf(test, pass, miss) {
     thread.post(null, 0, "HELLO");
 }
 
-function testThreadPostback(test, pass, miss) {
+function testThread_postback(test, pass, miss) {
 
     // [1] MainThread   | thread.post(null, 123, "HELLO")
     // [2] WorkerThread | thread.post(event, 123, event.data + " WORLD", token) に加工して返す
@@ -274,7 +289,7 @@ function testThreadPostback(test, pass, miss) {
     });
 }
 
-function testThreadPostbackWithToken(test, pass, miss) {
+function testThread_postbackWithToken(test, pass, miss) {
 
     // [1] MainThread   | thread.post(null, 1234, "HELLO")
     // [2] WorkerThread | thread.post(eent, 1234, event.data + " WORLD") に加工して返す
@@ -313,7 +328,7 @@ function testThreadPostbackWithToken(test, pass, miss) {
     });
 }
 
-function testThreadArrayBuffer(test, pass, miss) {
+function testThread_arrayBuffer(test, pass, miss) {
 
     var valid = false;
 
@@ -353,7 +368,7 @@ function testThreadArrayBuffer(test, pass, miss) {
 
 
 
-function testThreadPool(test, pass, miss) {
+function testThread_pool(test, pass, miss) {
 
     var task = new Task(3, function(err) {
             if (err) {
@@ -395,10 +410,10 @@ function testThreadPool(test, pass, miss) {
 }
 
 
-function testThreadMessagePack(test, pass, miss) {
+function testThread_messagePack(test, pass, miss) {
     var thread = new Thread("thread11.js");
 
-    var packed = Codec.MessagePack.encode({
+    var packed = MessagePack.encode({
             msg: "HELLO",
             date1: new Date(),
             date2: null,
@@ -406,7 +421,7 @@ function testThreadMessagePack(test, pass, miss) {
         });
 
     thread.post(null, 1, packed.buffer, [packed.buffer], function(event, key, value) {
-        var result = Codec.MessagePack.decode(new Uint8Array(value));
+        var result = MessagePack.decode(new Uint8Array(value));
         console.log(result.msg);   // -> "HELLO WORLD";
         console.log(result.date1);
         console.log(result.date2);
@@ -416,5 +431,7 @@ function testThreadMessagePack(test, pass, miss) {
 }
 
 
-})((this || 0).self || global);
+return test.run();
+
+})(GLOBAL);
 
