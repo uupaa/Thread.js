@@ -1,15 +1,8 @@
-importScripts("../lib/WebModuleGlobal.js");
-importScripts("../lib/Thread.js");
+importScripts("../lib/WebModule.js");
+importScripts("../lib/ThreadProxy.js");
 
-/*
-var thread = new Thread("", function(key, value, postback, event) {
-        thread.post(key, value + " WORLD", postback); // [2]
-    }, function(yes, no) {
-        yes(); // [5]
-    });
- */
-var thread = new Thread("", function(event, key, value) {
-        thread.post(event, key, value + " WORLD"); // [2]
+var proxy = new WebModule.ThreadProxy(function(args, event) {
+        event.postback([ args[1] + " WORLD" ]); // [2]
     }, function(yes, no) {
         yes(); // [5]
     });

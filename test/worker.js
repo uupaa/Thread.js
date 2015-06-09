@@ -12,9 +12,8 @@ onmessage = function(event) {
         self.console.table = function() {};
     }
 
-    importScripts("../lib/WebModuleGlobal.js");
+    importScripts("../lib/WebModule.js");
 
-    importScripts("../node_modules/uupaa.task.js/node_modules/uupaa.hash.js/lib/Hash.js");
     importScripts("../node_modules/uupaa.task.js/lib/Task.js");
     importScripts("../node_modules/uupaa.messagepack.js/node_modules/uupaa.utf8.js/lib/UTF8.js");
     importScripts("../node_modules/uupaa.messagepack.js/lib/MessagePack.js");

@@ -2,10 +2,13 @@ var ModuleTestThread = (function(global) {
 
 global["BENCHMARK"] = false;
 
-var EXIT_OK      = Thread.OK;
-var EXIT_ERROR   = Thread.ERROR;
-var EXIT_FORCE   = Thread.FORCE;
-var EXIT_TIMEOUT = Thread.TIMEOUT;
+var Thread       = WebModule.Thread;
+var ThreadProxy  = WebModule.ThreadProxy;
+var ThreadPool   = WebModule.ThreadPool;
+var EXIT_OK      = Thread.EXIT_OK;
+var EXIT_ERROR   = Thread.EXIT_ERROR;
+var EXIT_FORCE   = Thread.EXIT_FORCE;
+var EXIT_TIMEOUT = Thread.EXIT_TIMEOUT;
 
 var test = new Test("Thread", {
         disable:    false, // disable all tests.
@@ -22,6 +25,7 @@ var test = new Test("Thread", {
         }
     }).add([
         testThread,
+/*
         testThread_closeCancelAndForceClose,
         testThread_barkWatchdog,
         testThread_errorInThread,
@@ -32,6 +36,7 @@ var test = new Test("Thread", {
         testThread_arrayBuffer,
         testThread_pool,
         testThread_messagePack,
+ */
     ]);
 
 if (IN_BROWSER || IN_NW) {
@@ -51,34 +56,32 @@ if (IN_BROWSER || IN_NW) {
 // --- test cases ------------------------------------------
 function testThread(test, pass, miss) {
 
-    // [1] MainThread   | thread.post(null, 0, "HELLO")
-    // [2] WorkerThread | thread.post(event, 0, event.data + " WORLD") に加工して返す
-    // [3] MainThread   | "HELLO WORLD" を受け取る
-    // [4] MainThread   | thread.close()
-    // [5] WorkerThread | yes()
-    // [6] MainThread   | handleClose(EXIT_OK) が呼ばれる事を確認する
+    // [1] Thread      | thread.post([0, "HELLO"])
+    // [2] ThreadProxy | event.postback("HELLO WORLD") に加工して返す
+    // [3] Thread      | "HELLO WORLD" を受け取る
+    // [4] Thread      | thread.close()
+    // [5] ThreadProxy | yes()
+    // [6] Thread      | closeMessageHandler(exitCode = EXIT_OK)
 
     var valid = false;
 
-    var thread = new Thread("thread1.js", function(event, key, value) {
-            console.log(value); // "HELLO WORLD"
-            valid = value === "HELLO WORLD"; // [3]
-            thread.close(); // [4]
-        }, function(exitCode) { // [6]
+    var thread = new Thread("thread1.js", function postMessageHandler(event, key, value) {
+            //
+        }, function closeMessageHandler(exitCode) { // [6]
             switch (exitCode) {
             case EXIT_OK:
-                if (valid) {
-                    test.done(pass());
-                    return;
-                }
-            case EXIT_ERROR:
-            case EXIT_FORCE:
-            case EXIT_TIMEOUT:
+                if (valid) { test.done(pass()); }
+                break;
+            default:
+                test.done(miss());
             }
-            test.done(miss());
         });
 
-    thread.post(null, 0, "HELLO"); // [1]
+    thread.post([0, "HELLO"], null, function postbacMessageHandler(args, event) { // [3]
+        //console.log(args[0]); // "HELLO WORLD"
+        valid = args[0] === "HELLO WORLD";
+        thread.close(); // [4]
+    }); // [1]
 }
 
 function testThread_closeCancelAndForceClose(test, pass, miss) {

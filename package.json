@@ -1,6 +1,6 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
   "keywords": ["uupaa", "WebModule", "Unstable"],
@@ -12,7 +12,7 @@
     "sync": "node ../WebModule/run/sync.js; npm update; node ../WebModule/run/page.js",
     "min": "node ../WebModule/run/minify.js --verbose --strict --keep --pretty",
     "build": "node ../WebModule/run/minify.js --verbose --strict --keep --release",
-    "watch": "node ../WebModule/run/watch.js --verbose --run hint",
+    "watch": "node ../WebModule/run/watch.js --verbose --run lint",
     "page": "node ../WebModule/run/page.js --verbose",
     "test": "npm run min; npm run node; npm run browser",
     "node": "NODE_ENV=production NODE_PATH=lib node --harmony test/node.js",
@@ -20,7 +20,7 @@
     "browser": "open http://localhost:8000/Thread.js/test/index.html",
     "sim": "node ../WebModule/run/sim.js http://localhost:8000/Thread.js/test/index.html",
     "simx": "node ../WebModule/run/sim.js stop",
-    "hint": "eslint lib/*.js",
+    "lint": "eslint lib/*.js",
     "score": "node ../WebModule/run/score.js; open lint/plato/index.html",
     "patch": "node ../WebModule/run/patch.js",
     "setup": "node ../WebModule/run/setup.js",
@@ -31,21 +31,19 @@
     "develop": false,
     "label": ["@dev"],
     "browser": {
-      "source": ["lib/Thread.js", "lib/ThreadPool.js"],
+      "source": ["lib/Thread.js", "lib/ThreadProxy.js", "lib/ThreadPool.js"],
       "output": "release/Thread.b.min.js"
     },
     "worker": {
-      "source": ["lib/Thread.js", "lib/ThreadPool.js"],
+      "source": ["lib/Thread.js", "lib/ThreadProxy.js", "lib/ThreadPool.js"],
       "output": "release/Thread.w.min.js"
     },
     "nw": {
-      "source": ["lib/Thread.js", "lib/ThreadPool.js"],
+      "source": ["lib/Thread.js", "lib/ThreadProxy.js", "lib/ThreadPool.js"],
       "output": "release/Thread.nw.min.js"
     }
   },
-  "dependencies": {
-    "uupaa.hash.js": ""
-  },
+  "dependencies": {},
   "devDependencies": {
     "uupaa.task.js": "",
     "uupaa.messagepack.js": ""
