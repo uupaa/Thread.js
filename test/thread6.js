@@ -1,9 +1,8 @@
-importScripts("../lib/WebModuleGlobal.js");
-importScripts("../lib/Thread.js");
+importScripts("../lib/WebModule.js");
+importScripts("../lib/ThreadProxy.js");
 
-var thread = new Thread("", function(event, key, value) {
-
-        thread.close(); // [1]
+var proxy = new WebModule.ThreadProxy(function postMessageHandler(args, event) {
+        proxy.close(); // [1]
     }, function(yes, no) {
     });
 

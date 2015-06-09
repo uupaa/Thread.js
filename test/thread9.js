@@ -1,14 +1,14 @@
-importScripts("../lib/WebModuleGlobal.js");
-importScripts("../lib/Thread.js");
+importScripts("../lib/WebModule.js");
+importScripts("../lib/ThreadProxy.js");
 
-var thread = new Thread("", function(event, key, value) {
-        var u8 = new Uint8Array(value);
+var proxy = new WebModule.ThreadProxy(function postMessageHandler(args, event) {
+        var u8 = new Uint8Array(args[1]);
 
         u8[0] *= 2;
         u8[1] *= 2;
         u8[2] *= 2;
 
-        thread.post(event, key, u8.buffer, [u8.buffer]);
+        event.postback([args[0], args[1]], [u8.buffer]);
     }, function(yes, no) {
         yes();
     });

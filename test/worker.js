@@ -19,6 +19,7 @@ onmessage = function(event) {
     importScripts("../node_modules/uupaa.messagepack.js/lib/MessagePack.js");
     importScripts("wmtools.js");
     importScripts("../lib/Thread.js");
+    importScripts("../lib/ThreadProxy.js");
     importScripts("../lib/ThreadPool.js");
     importScripts("../release/Thread.w.min.js");
     importScripts("testcase.js");

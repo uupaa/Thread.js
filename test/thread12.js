@@ -2,8 +2,12 @@ importScripts("../lib/WebModule.js");
 importScripts("../lib/ThreadProxy.js");
 
 var proxy = new WebModule.ThreadProxy(function postMessageHandler(args, event) {
-        event.postback([args[0], args[1] + " WORLD"]); // [2]
-    }, function(yes, no) {
+        var delayTime = args[0];
+
+        setTimeout(function() {
+            proxy.post([delayTime]);
+        }, delayTime);
+    }, function closeRequestHandler(yes, no) {
         yes(); // [5]
     });
 

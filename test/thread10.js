@@ -1,12 +1,12 @@
-importScripts("../lib/WebModuleGlobal.js");
-importScripts("../lib/Thread.js");
+importScripts("../lib/WebModule.js");
+importScripts("../lib/ThreadProxy.js");
 
 var memory = "";
 
-var thread = new Thread("", function(event, key, value) {
-        memory += value;
+var proxy = new WebModule.ThreadProxy(function postMessageHandler(args, event) {
+        memory += args[1];
 
-        thread.post(event, key, memory);
+        event.postback([args[0], memory]);
 
     }, function(yes, no) {
         yes();

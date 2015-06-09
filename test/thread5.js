@@ -1,10 +1,10 @@
-importScripts("../lib/WebModuleGlobal.js");
-importScripts("../lib/Thread.js");
+importScripts("../lib/WebModule.js");
+importScripts("../lib/ThreadProxy.js");
 
 throw new Error("lol"); // [1]
 
-var thread = new Thread("", function(event, key, value) {
-        thread.post(event, key, value + " WORLD");
+var proxy = new WebModule.ThreadProxy(function postMessageHandler(args, event) {
+        event.postback([ args[1] + " WORLD" ]);
     }, function(yes, no) {
     });
 
