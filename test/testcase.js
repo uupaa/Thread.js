@@ -18,7 +18,7 @@ var test = new Test("Thread", {
         worker:     false, // enable worker test.
         node:       false, // enable node test.
         nw:         true,  // enable nw.js test.
-        button:     false, // show button.
+        button:     true,  // show button.
         both:       true,  // test the primary and secondary modules.
         ignoreError:false, // ignore error.
         callback:   function() {
@@ -38,6 +38,7 @@ var test = new Test("Thread", {
         testThread_pool,
         testThread_messagePack,
         testThread_post_and_post,
+        testThread_args,
     ]);
 
 if (IN_BROWSER || IN_NW) {
@@ -458,7 +459,22 @@ function testThread_post_and_post(test, pass, miss) {
     thread.post([delayTime]);
 }
 
+function testThread_args(test, pass, miss) {
+    var thread = new Thread("thread13.js", null, function(exitCode) {
+            if (exitCode) {
+                test.done(miss());
+            }
+        });
 
+    thread.post();   // undefined
+    thread.post(0);  // Number
+    thread.post(""); // String
+    thread.post([]); // Array
+
+    setTimeout(function() {
+        test.done(pass());
+    }, 1000);
+}
 
 return test.run();
 
