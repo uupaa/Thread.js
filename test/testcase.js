@@ -463,6 +463,8 @@ function testThread_args(test, pass, miss) {
     var thread = new Thread("thread13.js", null, function(exitCode) {
             if (exitCode) {
                 test.done(miss());
+            } else {
+                test.done(pass());
             }
         });
 
@@ -472,7 +474,7 @@ function testThread_args(test, pass, miss) {
     thread.post([]); // Array
 
     setTimeout(function() {
-        test.done(pass());
+        thread.close();
     }, 1000);
 }
 
