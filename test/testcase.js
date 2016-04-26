@@ -1,7 +1,5 @@
 var ModuleTestThread = (function(global) {
 
-global["BENCHMARK"] = false;
-
 var Thread       = WebModule.Thread;
 var ThreadProxy  = WebModule.ThreadProxy;
 var ThreadPool   = WebModule.ThreadPool;
@@ -12,20 +10,25 @@ var EXIT_ERROR   = Thread.EXIT_ERROR;
 var EXIT_FORCE   = Thread.EXIT_FORCE;
 var EXIT_TIMEOUT = Thread.EXIT_TIMEOUT;
 
-var test = new Test("Thread", {
+var test = new Test(["Thread"], { // Add the ModuleName to be tested here (if necessary).
         disable:    false, // disable all tests.
         browser:    true,  // enable browser test.
         worker:     false, // enable worker test.
         node:       false, // enable node test.
         nw:         true,  // enable nw.js test.
+        el:         true,  // enable electron (render process) test.
         button:     true,  // show button.
         both:       true,  // test the primary and secondary modules.
         ignoreError:false, // ignore error.
         callback:   function() {
         },
         errorback:  function(error) {
+            console.error(error.message);
         }
-    }).add([
+    });
+
+if (IN_BROWSER || IN_NW || IN_EL || IN_WORKER || IN_NODE) {
+    test.add([
         testThread,
         testThread_closeCancelAndForceClose,
         testThread_barkWatchdog,
@@ -39,19 +42,6 @@ var test = new Test("Thread", {
         testThread_messagePack,
         testThread_post_and_post,
         testThread_args,
-    ]);
-
-if (IN_BROWSER || IN_NW) {
-    test.add([
-        // browser and node-webkit test
-    ]);
-} else if (IN_WORKER) {
-    test.add([
-        // worker test
-    ]);
-} else if (IN_NODE) {
-    test.add([
-        // node.js and io.js test
     ]);
 }
 
@@ -67,7 +57,7 @@ function testThread(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread1.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread1.js", function postMessageHandler(args) {
             //
         }, function closeMessageHandler(exitCode) { // [6]
             switch (exitCode) {
@@ -96,7 +86,7 @@ function testThread_closeCancelAndForceClose(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread2.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread2.js", function postMessageHandler(args) {
             //
         }, function closeMessageHandler(exitCode) {
             switch (exitCode) {
@@ -137,7 +127,7 @@ function testThread_barkWatchdog(test, pass, miss) {
     // [4] Thread      | 1.5秒後に終了している事を確認
     var valid = false;
 
-    var thread = new Thread("thread3.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread3.js", function postMessageHandler(args) {
             //
         }, function closeMessageHandler(exitCode) { // [3]
             switch (exitCode) {
@@ -169,7 +159,7 @@ function testThread_errorInThread(test, pass, miss) {
     // [3] Thread      | 1秒後に終了している事を確認
     var valid = false;
 
-    var thread = new Thread("thread4.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread4.js", function postMessageHandler(args) {
         }, function closeMessageHandler(exitCode) { // [2]
             switch (exitCode) {
             case EXIT_ERROR: valid = true;
@@ -208,7 +198,7 @@ function testThread_errorInWorker(test, pass, miss) {
         }
     }, 2000);
 
-    var thread = new Thread("thread5.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread5.js", function postMessageHandler(args) {
             //console.log(value); // "HELLO WORLD"
             //thread.close();
 
@@ -239,7 +229,7 @@ function testThread_closeSelf(test, pass, miss) {
         }
     }, 2000);
 
-    var thread = new Thread("thread6.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread6.js", function postMessageHandler(args) {
             //console.log(value); // "HELLO WORLD"
             //thread.close();
 
@@ -267,7 +257,7 @@ function testThread_postback(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread7.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread7.js", function postMessageHandler(args) {
 /*
             console.log(value); // "HELLO WORLD"
             valid = value === "HELLO WORLD"; // [3]
@@ -308,7 +298,7 @@ function testThread_postbackWithToken(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread8.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread8.js", function postMessageHandler(args) {
 /*
             console.log(value); // "HELLO WORLD"
             valid = value === "HELLO WORLD"; // [3]
@@ -340,7 +330,7 @@ function testThread_arrayBuffer(test, pass, miss) {
 
     var valid = false;
 
-    var thread = new Thread("thread9.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread9.js", function postMessageHandler(args) {
             test.done(miss());
         }, function closeMessageHandler(exitCode) { // [6]
             switch (exitCode) {
@@ -378,7 +368,7 @@ function testThread_arrayBuffer(test, pass, miss) {
 
 function testThread_pool(test, pass, miss) {
 
-    var task = new Task(3, function(err) {
+    var task = new Task("testThread_pool", 3, function(err) {
             if (err) {
                 test.done(miss());
             } else {
@@ -387,9 +377,9 @@ function testThread_pool(test, pass, miss) {
         });
 
     var pool = new ThreadPool([
-               new Thread("thread10.js"),
-               new Thread("thread10.js"),
-               new Thread("thread10.js"),
+               new Thread("../thread10.js"),
+               new Thread("../thread10.js"),
+               new Thread("../thread10.js"),
             ]);
 
     pool.post([1, "A"], null, function(args) {
@@ -417,7 +407,7 @@ function testThread_pool(test, pass, miss) {
 
 
 function testThread_messagePack(test, pass, miss) {
-    var thread = new Thread("thread11.js", null, function closeMessageHandler(exitCode) { // [6]
+    var thread = new Thread("../thread11.js", null, function closeMessageHandler(exitCode) { // [6]
         //alert(exitCode);
     });
 
@@ -445,7 +435,7 @@ function testThread_post_and_post(test, pass, miss) {
     var valid = false;
 
     var delayTime = 1000;
-    var thread = new Thread("thread12.js", function postMessageHandler(args) {
+    var thread = new Thread("../thread12.js", function postMessageHandler(args) {
             if (delayTime === args[0]) {
                 test.done(pass());
             } else {
@@ -460,7 +450,7 @@ function testThread_post_and_post(test, pass, miss) {
 }
 
 function testThread_args(test, pass, miss) {
-    var thread = new Thread("thread13.js", null, function(exitCode) {
+    var thread = new Thread("../thread13.js", null, function(exitCode) {
             if (exitCode) {
                 test.done(miss());
             } else {

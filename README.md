@@ -5,16 +5,16 @@
 Thread and ThreadPool functions.
 
 
-- Thread.js made of [WebModule](https://github.com/uupaa/WebModule).
-- [Spec](https://github.com/uupaa/Thread.js/wiki/Thread)
+This module made of [WebModule](https://github.com/uupaa/WebModule).
 
-## Browser and NW.js(node-webkit)
+## Documentation
+- [Spec](https://github.com/uupaa/Thread.js/wiki/)
+- [API Spec](https://github.com/uupaa/Thread.js/wiki/Thread)
 
-
-### Browser and node-webkit
+## Browser, NW.js and Electron
 
 ```js
-// thread.html
+// main.html
 
 <script src="<module-dir>/lib/WebModule.js"></script>
 <script src="<module-dir>/lib/Thread.js"></script>
@@ -25,9 +25,9 @@ var thread = new WebModule.Thread("worker.js", function postMessageHandler(args)
     }, function(exitCode) {
 
         switch (exitCode) {
-        case Thread.EXIT_OK: console.log("Closed."); break;
-        case Thread.EXIT_ERROR: console.log("Terminates with an error from WorkerThread. " + errorMessage); break;
-        case Thread.EXIT_FORCE: console.log("Forced termination by user."); break;
+        case Thread.EXIT_OK:      console.log("Closed."); break;
+        case Thread.EXIT_ERROR:   console.log("Terminates with an error from WorkerThread. " + errorMessage); break;
+        case Thread.EXIT_FORCE:   console.log("Forced termination by user."); break;
         case Thread.EXIT_TIMEOUT: console.log("Watchdog barked.");
         }
     });
@@ -45,8 +45,8 @@ thread.post(["HELLO", 123], null, function postbackMessageHandler(args) {
 ```js
 // worker.js
 
-importScripts("<module-dir>lib/WebModule.js");
-importScripts("<module-dir>lib/ThreadProxy.js");
+importScripts("<module-dir>/lib/WebModule.js");
+importScripts("<module-dir>/lib/ThreadProxy.js");
 
 var thread = new WebModule.ThreadProxy(function postMessageHandler(args, event) {
         console.log(args[0]); // "HELLO"

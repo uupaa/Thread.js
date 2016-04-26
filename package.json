@@ -1,6 +1,6 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
   "keywords": ["uupaa", "WebModule", "Unstable"],
@@ -16,10 +16,14 @@
     "watch": "node ../WebModule/run/watch.js --verbose --run lint",
     "page": "node ../WebModule/run/page.js --verbose",
     "test": "npm run min; npm run node; npm run browser",
-    "node": "NODE_ENV=production NODE_PATH=lib node --harmony test/node.js",
-    "noded": "NODE_ENV=production NODE_PATH=lib node --debug-brk --harmony test/node.js",
-    "browser": "open http://localhost:8000/Thread.js/test/index.html",
-    "sim": "node ../WebModule/run/sim.js http://localhost:8000/Thread.js/test/index.html",
+    "node": "NODE_ENV=production NODE_PATH=lib node test/node/index.js",
+    "noded": "NODE_ENV=production NODE_PATH=lib node --debug-brk test/node/index.js",
+    "browser": "open http://localhost:8000/Thread.js/test/browser/index.html",
+    "el": "electron test/el",
+    "nw": "nw test/nw",
+    "add-src": "node ../WebModule/run/add-src.js",
+    "add-subclass": "node ../WebModule/run/add-subclass.js",
+    "sim": "node ../WebModule/run/sim.js http://localhost:8000/Thread.js/test/browser/index.html",
     "simx": "node ../WebModule/run/sim.js stop",
     "lint": "eslint lib/*.js",
     "score": "node ../WebModule/run/score.js; open lint/plato/index.html",
@@ -32,16 +36,42 @@
     "develop": false,
     "label": ["@dev"],
     "browser": {
-      "source": ["lib/Thread.js", "lib/ThreadProxy.js", "lib/ThreadPool.js"],
-      "output": "release/Thread.b.min.js"
+      "output": "release/Thread.b.min.js",
+      "source": [
+        "lib/Thread.js",
+        "lib/ThreadProxy.js",
+        "lib/ThreadPool.js"
+      ]
     },
     "worker": {
-      "source": ["lib/Thread.js", "lib/ThreadProxy.js", "lib/ThreadPool.js"],
-      "output": "release/Thread.w.min.js"
+      "output": "release/Thread.w.min.js",
+      "source": [
+        "lib/Thread.js",
+        "lib/ThreadProxy.js",
+        "lib/ThreadPool.js"
+      ]
+    },
+    "node": {
+      "output": "release/Thread.n.min.js",
+      "source": [
+        "lib/Thread.js"
+      ]
     },
     "nw": {
-      "source": ["lib/Thread.js", "lib/ThreadProxy.js", "lib/ThreadPool.js"],
-      "output": "release/Thread.nw.min.js"
+      "output": "release/Thread.nw.min.js",
+      "source": [
+        "lib/Thread.js",
+        "lib/ThreadProxy.js",
+        "lib/ThreadPool.js"
+      ]
+    },
+    "el": {
+      "output": "release/Thread.el.min.js",
+      "source": [
+        "lib/Thread.js",
+        "lib/ThreadProxy.js",
+        "lib/ThreadPool.js"
+      ]
     }
   },
   "dependencies": {},
