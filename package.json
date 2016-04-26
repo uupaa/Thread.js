@@ -1,6 +1,6 @@
 {
   "name": "uupaa.thread.js",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "Thread and ThreadPool functions.",
   "url": "https://github.com/uupaa/Thread.js",
   "keywords": ["uupaa", "WebModule", "Unstable"],
@@ -39,16 +39,13 @@
       "output": "release/Thread.b.min.js",
       "source": [
         "lib/Thread.js",
-        "lib/ThreadProxy.js",
         "lib/ThreadPool.js"
       ]
     },
     "worker": {
       "output": "release/Thread.w.min.js",
       "source": [
-        "lib/Thread.js",
-        "lib/ThreadProxy.js",
-        "lib/ThreadPool.js"
+        "lib/ThreadProxy.js"
       ]
     },
     "node": {
@@ -61,7 +58,6 @@
       "output": "release/Thread.nw.min.js",
       "source": [
         "lib/Thread.js",
-        "lib/ThreadProxy.js",
         "lib/ThreadPool.js"
       ]
     },
@@ -69,7 +65,6 @@
       "output": "release/Thread.el.min.js",
       "source": [
         "lib/Thread.js",
-        "lib/ThreadProxy.js",
         "lib/ThreadPool.js"
       ]
     }
