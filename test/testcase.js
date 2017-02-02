@@ -42,6 +42,7 @@ if (IN_BROWSER || IN_NW || IN_EL || IN_WORKER || IN_NODE) {
         testThread_messagePack,
         testThread_post_and_post,
         testThread_args,
+        testThread_ttl,
     ]);
 }
 
@@ -466,6 +467,48 @@ function testThread_args(test, pass, miss) {
     setTimeout(function() {
         thread.close();
     }, 1000);
+}
+
+function testThread_ttl(test, pass, miss) {
+    // ttlが3なので、postbackMessageHandler が3回呼ばれ
+    // 4回目は postMessageHandler が呼ばれる事を確認する
+
+
+    // [2][3][4] ThreadProxy | event.postback("HELLO WORLD {n}") に加工して返す, n は 1..3
+    // [2][3][4] Thread      | postbackMessageHandler が "HELLO WORLD {n}" を受け取る
+    // [5]       Thread      | postMessageHandler が "HELLO WORLD 4" を受け取る
+
+    var valid = 0;
+
+    var thread = new Thread("../thread_ttl.js", function postMessageHandler(args) {
+            if (args[0] === "HELLO WORLD 4") {
+                valid++;
+            }
+            if (valid >= 4) {
+                thread.close();
+            }
+        }, function closeMessageHandler(exitCode) {
+            switch (exitCode) {
+            case EXIT_OK:
+                if (valid >= 4) {
+                    test.done(pass());
+                } else {
+                    test.done(miss());
+                }
+                break;
+            default:
+                test.done(miss());
+            }
+        });
+
+    var ttl = 3;
+    thread.post([0, "HELLO"], null, function postbackMessageHandler(args, event) { // [2][3][4]
+        if (args[0] === "HELLO WORLD 1" ||
+            args[0] === "HELLO WORLD 2" ||
+            args[0] === "HELLO WORLD 3") {
+            valid++;
+        }
+    }, ttl);
 }
 
 return test.run();
